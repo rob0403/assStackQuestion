@@ -107,6 +107,7 @@ Known issues:
 - Linebreaks after the input dissapear after clicking the stepwise evaluation button.
 - Error message when input has not valid entries is not properly displayed
 
+
 Version 3.0.12 (2018-11-30) for ILIAS 5.3
 ----------------------------------------
 - Solved some problems with best solution display when question variables are used in model answer in algebraic inputs.
