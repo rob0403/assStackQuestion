@@ -62,7 +62,7 @@ class assStackQuestionDisplayGUI
 	 * This method is called from assStackQuestionGUI and assStackQuestionPreviewGUI to get the question display HTML.
 	 * @return ilTemplate the STACK Question display HTML
 	 */
-	public function getQuestionDisplayGUI($show_specific_feedback_for_each_answer = FALSE)
+	public function getQuestionDisplayGUI($show_specific_feedback_for_each_answer = FALSE, $stepwise_feedback = FALSE)
 	{
 		//Step 1: Enable ajax;
 		$this->enableAjax();
@@ -71,7 +71,7 @@ class assStackQuestionDisplayGUI
 		$this->prepareExtraInfo();
 
 		//Step 3: Replace placeholders
-		$this->replacePlaceholders($show_specific_feedback_for_each_answer);
+		$this->replacePlaceholders($show_specific_feedback_for_each_answer, $stepwise_feedback);
 
 		//Step 5: Fill template
 		$this->fillTemplate();
@@ -144,7 +144,7 @@ class assStackQuestionDisplayGUI
 				if ($this->getDisplay('validation', $input_name) == 'instant')
 				{
 					//Instant validation
-					$validation = $this-> validationDisplayDivision($input_name, $input);
+					$validation = $this->validationDisplayDivision($input_name, $input);
 					$this->setDisplay($validation, 'validation', $input_name);
 				} elseif ($this->getDisplay('validation', $input_name) == 'button')
 				{
@@ -192,7 +192,7 @@ class assStackQuestionDisplayGUI
 	/**
 	 * Replaces the placeholders with the info given by question display
 	 */
-	private function replacePlaceholders($show_feedback = FALSE)
+	private function replacePlaceholders($show_feedback = FALSE, $stepwise_feedback = FALSE)
 	{
 		//Step 1: Replace placeholders per each input
 		if (is_array($this->getDisplay('inputs')))
@@ -253,7 +253,7 @@ class assStackQuestionDisplayGUI
 		}
 
 		//Step 2: Replace feedback placeholders
-		if (is_array($this->getDisplay('prts')) AND $show_feedback)
+		if ((is_array($this->getDisplay('prts')) AND $show_feedback) OR $stepwise_feedback)
 		{
 			foreach ($this->getDisplay('prts') as $prt_name => $prt)
 			{
@@ -270,34 +270,33 @@ class assStackQuestionDisplayGUI
 				global $tpl;
 				$config_options = assStackQuestionConfig::_getStoredSettings("feedback");
 				//if(strpos($display['display'], "xqcas_feedback_class_2")){
-					$class = $config_options["feedback_node_right"];
-					$tpl->addCss($this->getPlugin()->getStyleSheetLocation("css/feedback_styles/".$class));
+				$class = $config_options["feedback_node_right"];
+				$tpl->addCss($this->getPlugin()->getStyleSheetLocation("css/feedback_styles/" . $class));
 				//}
 				//if(strpos($display['display'], "xqcas_feedback_class_3")){
-					$class = $config_options["feedback_node_wrong"];
-					$tpl->addCss($this->getPlugin()->getStyleSheetLocation("css/feedback_styles/".$class));
+				$class = $config_options["feedback_node_wrong"];
+				$tpl->addCss($this->getPlugin()->getStyleSheetLocation("css/feedback_styles/" . $class));
 				//}
 				//if(strpos($display['display'], "xqcas_feedback_class_4")){
-					$class = $config_options["feedback_solution_hint"];
-					$tpl->addCss($this->getPlugin()->getStyleSheetLocation("css/feedback_styles/".$class));
+				$class = $config_options["feedback_solution_hint"];
+				$tpl->addCss($this->getPlugin()->getStyleSheetLocation("css/feedback_styles/" . $class));
 				//}
 				//if(strpos($display['display'], "xqcas_feedback_class_5")){
-					$class = $config_options["feedback_extra_info"];
-					$tpl->addCss($this->getPlugin()->getStyleSheetLocation("css/feedback_styles/".$class));
+				$class = $config_options["feedback_extra_info"];
+				$tpl->addCss($this->getPlugin()->getStyleSheetLocation("css/feedback_styles/" . $class));
 				//}
 				//if(strpos($display['display'], "xqcas_feedback_class_6")){
-					$class = $config_options["feedback_plot_feedback"];
-					$tpl->addCss($this->getPlugin()->getStyleSheetLocation("css/feedback_styles/".$class));
+				$class = $config_options["feedback_plot_feedback"];
+				$tpl->addCss($this->getPlugin()->getStyleSheetLocation("css/feedback_styles/" . $class));
 				//}
 				//if(strpos($display['display'], "xqcas_feedback_class_7")){
-					$class = $config_options["feedback_extra_1"];
-					$tpl->addCss($this->getPlugin()->getStyleSheetLocation("css/feedback_styles/".$class));
+				$class = $config_options["feedback_extra_1"];
+				$tpl->addCss($this->getPlugin()->getStyleSheetLocation("css/feedback_styles/" . $class));
 				//}
 
 				//UzK.
 				$question_specific_feedback = str_replace("[[feedback:{$prt_name}]]", $display['display'], $this->getDisplay('question_specific_feedback'));
 				$this->setDisplay($question_specific_feedback, 'question_specific_feedback');
-
 			}
 		} else
 		{

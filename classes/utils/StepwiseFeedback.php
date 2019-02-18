@@ -57,9 +57,42 @@ function checkUserResponse($question_id, $inputs, $prt_name)
 		$user_responses[$input_name] = $input_value;
 	}
 
-	//Evluate PRT
-	$prt = $stack_question->getPRTs($prt_name);
-	$prt_state = $prt->evaluate_response($stack_question->getSession(), $stack_question->getOptions(), $user_responses, $seed);
+	//
+	//PRT to be evaluated
+	$potentialresponse_tree = $stack_question->getPRTs($prt_name);
+
+	//Array with all imputs evaluated by this PRT
+	$prt_inputs = array();
+
+	//Checking of inputs
+	foreach ($potentialresponse_tree->get_required_variables(array_keys($stack_question->getInputs())) as $input_name)
+	{
+		$input = $stack_question->getInputs($input_name);
+		if (is_a($input, "stack_equiv_input") OR is_a($input, "stack_textarea_input"))
+		{
+			$stack_response = $input->maxima_to_response_array("[" . $user_responses[$input_name] . "]");
+		} elseif (is_a($input, "stack_matrix_input"))
+		{
+			//
+		} else
+		{
+			$stack_response = $input->maxima_to_response_array($user_responses[$input_name]);
+		}
+
+		$input_state = $input->validate_student_response($stack_response, $stack_question->getOptions(), $stack_question->getSession()->get_value_key($input_name), "");
+
+		if (stack_input::SCORE == $input_state->status || (stack_input::VALID == $input_state->status))
+		{
+			$prt_inputs[$input_name] = $input_state->__get("contentsmodified");
+		}else{
+			$message = '<div class="xqcas_feedback_class_3"><p>' . $input_state->__get("errors");
+			$message .= '</p></div>';
+			return $message;
+		}
+	}
+
+	//Evaluate PRT
+	$prt_state = $potentialresponse_tree->evaluate_response($stack_question->getSession(), $stack_question->getOptions(), $prt_inputs, $seed);
 
 	//Get feedback
 	//For each feedback obj add a line the the message with the feedback.
@@ -68,39 +101,43 @@ function checkUserResponse($question_id, $inputs, $prt_name)
 	{
 		foreach ($prt_state->__get('feedback') as $feedback_obj)
 		{
-			switch ($feedback_obj->format)
+			if (strlen($prt_state->substitue_variables_in_feedback($feedback_obj->feedback)))
 			{
-				case NULL:
-					//$feedback .= '<div class="xqcas_feedback_class_4"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
-					//$feedback .= '</p></div>';
-					break;
-				case "2":
-					$feedback .= '<div class="xqcas_feedback_class_2"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
-					$feedback .= '</p></div>';
-					break;
-				case "3":
-					$feedback .= '<div class="xqcas_feedback_class_3"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
-					$feedback .= '</p></div>';
-					break;
-				case "4":
-					$feedback .= '<div class="xqcas_feedback_class_4"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
-					$feedback .= '</p></div>';
-					break;
-				case "5":
-					$feedback .= '<div class="xqcas_feedback_class_5"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
-					$feedback .= '</p></div>';
-					break;
-				case "6":
-					$feedback .= '<div class="xqcas_feedback_class_6"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
-					$feedback .= '</p></div>';
-					break;
-				case "7":
-					$feedback .= '<div class="xqcas_feedback_class_7"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
-					$feedback .= '</p></div>';
-					break;
+				switch ($feedback_obj->format)
+				{
+					case NULL:
+						//$feedback .= '<div class="xqcas_feedback_class_4"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
+						//$feedback .= '</p></div>';
+						break;
+					case "2":
+						$feedback .= '<div class="xqcas_feedback_class_2"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
+						$feedback .= '</p></div>';
+						break;
+					case "3":
+						$feedback .= '<div class="xqcas_feedback_class_3"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
+						$feedback .= '</p></div>';
+						break;
+					case "4":
+						$feedback .= '<div class="xqcas_feedback_class_4"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
+						$feedback .= '</p></div>';
+						break;
+					case "5":
+						$feedback .= '<div class="xqcas_feedback_class_5"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
+						$feedback .= '</p></div>';
+						break;
+					case "6":
+						$feedback .= '<div class="xqcas_feedback_class_6"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
+						$feedback .= '</p></div>';
+						break;
+					case "7":
+						$feedback .= '<div class="xqcas_feedback_class_7"><p>' . $prt_state->substitue_variables_in_feedback($feedback_obj->feedback);
+						$feedback .= '</p></div>';
+						break;
+				}
 			}
 		}
-		if(strlen($prt_state->__get("errors"))){
+		if (strlen($prt_state->__get("errors")))
+		{
 			$feedback .= '<div class="xqcas_feedback_class_3"><p>' . $prt_state->__get("errors");
 			$feedback .= '</p></div>';
 		}

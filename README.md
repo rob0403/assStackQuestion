@@ -98,6 +98,12 @@ PLEASE BACKUP YOUR DATABASE before you run the update from an older version. Dep
 The translation is also done when importing questions from ILIAS or MoodleXML, but please notice that this conversion is one way.You can import "old CASText behaviour" questions to a platform with STACK plugin version 3.0+.
 But if you import "new CASText behaviour" questions to a platform with a previous version of the plugin, your question will not be properly shown on that platform.
 
+Version 3.0.15 (2019-02-18) for ILIAS 5.3 - UzK Branch (Beta)
+----------------------------------------
+This version has been made for the University of Cologne to support specific features, The following bugs were solved:
+- Problems with invalid answer should now report the proper error messages, instead of CAS failure messages.
+- In case of not valid answer provided by users, the PRT is not evaluated as in normal evaluation process.
+
 Version 3.0.13 (2018-12-17) for ILIAS 5.3 - UzK Branch (Beta)
 ----------------------------------------
 This version has been made for the University of Cologne to support specific features, the following features has been implemented:
