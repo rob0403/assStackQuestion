@@ -98,7 +98,12 @@ PLEASE BACKUP YOUR DATABASE before you run the update from an older version. Dep
 The translation is also done when importing questions from ILIAS or MoodleXML, but please notice that this conversion is one way.You can import "old CASText behaviour" questions to a platform with STACK plugin version 3.0+.
 But if you import "new CASText behaviour" questions to a platform with a previous version of the plugin, your question will not be properly shown on that platform.
 
-Version 3.0.17 (2019-12-27) for ILIAS 5.3 - UzK Branch (Beta)
+Version 3.0.19 (2019-3-xx) for ILIAS 5.3 - UzK Branch (Beta)
+----------------------------------------
+The following bug reports were fixed:
+- https://mantis.ilias.de/view.php?id=24998
+
+Version 3.0.17 (2019-2-27) for ILIAS 5.3 - UzK Branch (Beta)
 ----------------------------------------
 - Added a new feature Copy of Nodes and PRT: In question Authoring now exists the option to copy nodes and PRT, when clicking on copying Node or PRT, the chosen element is stored in the session, then, the user should go to the question or PRT the user wants to paste te node/prt and click on paste. A new PRT or a new node will be created with the values of the copied one. Please notice that when a node is copied to a PRT, the fields next node when true/false are not copied and should be edited by hand.
 The following bug reports were fixed:

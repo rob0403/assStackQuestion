@@ -130,7 +130,6 @@ class assStackQuestionFeedback
 				$user_responses[$input_name]['model_answer'] = $correct_response["value"];
 				//Fill model answer display
 				$user_responses[$input_name]['model_answer_display'] = $correct_response["display"];
-
 			} else
 			{
 				//Input was not Ok, use getLatexText
@@ -374,9 +373,9 @@ class assStackQuestionFeedback
 			{
 				$correct_answer_array = $input->get_correct_response($this->getQuestion()->getSession()->get_value_key($input_name, true));
 				$correct_answer = $correct_answer_array[$input_name];
-				if (!$correct_answer)
+				if (strlen($correct_answer))
 				{
-					$correct_answer = $input->get_teacher_answer();
+					$correct_answer = $this->getQuestion()->getSession()->get_value_key($input->get_teacher_answer());
 				}
 				$input_size = strlen($correct_answer) * 1.1;
 				$input_html_display = '<input type="text" size="' . $input_size . '" id="xqcas_' . $this->getQuestion()->getQuestionId() . '_' . $input_name . '_postvalidation" value="' . $correct_answer . '" disabled="disabled">';
