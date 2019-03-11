@@ -70,10 +70,10 @@ function checkUserResponse($question_id, $inputs, $prt_name)
 		$input = $stack_question->getInputs($input_name);
 		if (is_a($input, "stack_equiv_input") OR is_a($input, "stack_textarea_input"))
 		{
-			$stack_response = $input->maxima_to_response_array("[" . $user_responses[$input_name] . "]");
+			$stack_response = array($input_name => $input->maxima_to_raw_input("[" . $user_responses[$input_name] . "]"));
 		} elseif (is_a($input, "stack_matrix_input"))
 		{
-			//
+			$stack_response = $input->maxima_to_response_array($user_responses[$input_name]);
 		} else
 		{
 			$stack_response = $input->maxima_to_response_array($user_responses[$input_name]);
@@ -93,7 +93,6 @@ function checkUserResponse($question_id, $inputs, $prt_name)
 
 	//Evaluate PRT
 	$prt_state = $potentialresponse_tree->evaluate_response($stack_question->getSession(), $stack_question->getOptions(), $prt_inputs, $seed);
-
 	//Get feedback
 	//For each feedback obj add a line the the message with the feedback.
 	$feedback = "";
