@@ -583,7 +583,7 @@ class assStackQuestionGUI extends assQuestionGUI
 	 * @param boolean $show_question_text
 	 * @return string The solution output of the question as HTML code
 	 */
-	function getSolutionOutput($active_id, $pass = NULL, $graphicalOutput = FALSE, $result_output = FALSE, $show_question_only = TRUE, $show_feedback = FALSE, $show_correct_solution = FALSE, $show_manual_scoring = FALSE, $show_question_text = TRUE)
+	function getSolutionOutput($active_id, $pass = NULL, $graphicalOutput = FALSE, $result_output = FALSE, $show_question_only = TRUE, $show_feedback = TRUE, $show_correct_solution = FALSE, $show_manual_scoring = FALSE, $show_question_text = TRUE)
 	{
 		$solution_template = new ilTemplate("tpl.il_as_tst_solution_output.html", TRUE, TRUE, "Modules/TestQuestionPool");
 		//Check for PASS
@@ -685,7 +685,7 @@ class assStackQuestionGUI extends assQuestionGUI
 	 * @param bool $show_feedback TRUE if specific feedback per PRT must be shown.
 	 * @return string
 	 */
-	public function getQuestionOutput($solutions, $best_solution, $show_feedback = FALSE, $just_show = FALSE)
+	public function getQuestionOutput($solutions, $best_solution, $show_feedback, $just_show = FALSE)
 	{
 		if (isset($solutions["question_text"]) AND strlen($solutions["question_text"]))
 		{
@@ -756,7 +756,7 @@ class assStackQuestionGUI extends assQuestionGUI
 										$question_text = str_replace("[[validation:" . $input_name . "]]", $validation_replacement, $question_text);
 									} else
 									{
-										$input_replacement = "</br>" . $input_answer["value"];
+										$input_replacement = "<textarea rows=\"4\" cols=\"50\">" . $input_answer["value"]. "</textarea>";
 									}
 									$size = $input->getBoxSize();
 									$input_text = "";
@@ -786,9 +786,8 @@ class assStackQuestionGUI extends assQuestionGUI
 										}
 									}
 									$size = strlen($input_replacement) + 5;
-									$input_text = "";
-									$input_text .= $input_replacement;
-									$question_text = str_replace("[[input:" . $input_name . "]]", $input_text, $question_text);
+									$input_html_display = '<input type="text" size="' . $size . '" value="' . $input_replacement . '" disabled="disabled">';
+									$question_text = str_replace("[[input:" . $input_name . "]]", $input_html_display, $question_text);
 									break;
 							}
 
@@ -1715,7 +1714,7 @@ class assStackQuestionGUI extends assQuestionGUI
 			$xml_file = $_FILES["questions_xml"]["tmp_name"];
 		} else
 		{
-			$this->question_gui->object->setErrors($this->plugin->txt('error_import_question_in_test'));
+			$this->object->setErrors($this->plugin->txt('error_import_question_in_test'), true);
 
 			return;
 		}
@@ -1723,7 +1722,7 @@ class assStackQuestionGUI extends assQuestionGUI
 		//CHECK FOR NOT ALLOW IMPROT QUESTIONS DIRECTLY IN TESTS
 		if (isset($_GET['calling_test']))
 		{
-			$this->question_gui->object->setErrors($this->plugin->txt('error_import_question_in_test'));
+			$this->object->setErrors($this->plugin->txt('error_import_question_in_test'), true);
 
 			return;
 		} else
